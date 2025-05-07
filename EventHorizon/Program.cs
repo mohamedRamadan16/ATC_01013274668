@@ -1,4 +1,10 @@
 
+using EventHorizon.DataAccess.Data;
+using EventHorizon.DataAccess.Persistence;
+using EventHorizon.Models.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 namespace EventHorizon
 {
     public class Program
@@ -14,7 +20,23 @@ namespace EventHorizon
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddScoped<ISeeder, Seeder>();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+            });
+
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
             var app = builder.Build();
+
+            /// seeding when start the application
+            var scope = app.Services.CreateScope();
+            var seeder = scope.ServiceProvider.GetRequiredService<ISeeder>();
+            seeder.Seed();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
