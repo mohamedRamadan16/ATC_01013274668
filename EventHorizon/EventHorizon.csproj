@@ -16,11 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\EventHorizon.DataAccess\EventHorizon.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventHorizon.DataAccess\EventHorizon.DataAccess.csproj" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

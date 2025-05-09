@@ -31,6 +31,16 @@ namespace EventHorizon
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("EventHorizonPolicy", policy =>
+                {
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+
+            });
+
             var app = builder.Build();
 
             /// seeding when start the application
@@ -49,6 +59,7 @@ namespace EventHorizon
 
             app.UseAuthorization();
 
+            app.UseCors("EventHorizonPolicy");
 
             app.MapControllers();
 
