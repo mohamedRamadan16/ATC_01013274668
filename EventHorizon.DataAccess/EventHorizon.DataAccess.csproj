@@ -21,8 +21,4 @@
     <ProjectReference Include="..\EventHorizon.Models\EventHorizon.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repository\IRepository\" />
-  </ItemGroup>
-
 </Project>
