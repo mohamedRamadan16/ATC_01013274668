@@ -1,6 +1,8 @@
 
 using EventHorizon.DataAccess.Data;
 using EventHorizon.DataAccess.Persistence;
+using EventHorizon.DataAccess.Repository;
+using EventHorizon.DataAccess.Repository.IRepository;
 using EventHorizon.Models.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +23,9 @@ namespace EventHorizon
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<ISeeder, Seeder>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
+
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
