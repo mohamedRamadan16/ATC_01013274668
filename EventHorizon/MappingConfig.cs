@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventHorizon.Models.DTOs.Category;
+using EventHorizon.Models.DTOs.Event;
 using EventHorizon.Models.Models;
 
 namespace EventHorizon
@@ -14,6 +15,9 @@ namespace EventHorizon
             CreateMap<Category, CategoryUpdateDTO>().ReverseMap();
 
             // Event
+            CreateMap<Event, EventDTO>().ReverseMap();
+            CreateMap<Event, EventCreateDTO>().ReverseMap();
+            CreateMap<Event, EventUpdateDTO>().ReverseMap();
         }
     }
 }

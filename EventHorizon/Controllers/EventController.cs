@@ -1,26 +1,25 @@
 ﻿using AutoMapper;
-using Azure;
 using EventHorizon.DataAccess.Persistence;
 using EventHorizon.DataAccess.Repository.IRepository;
-using EventHorizon.Models.DTOs.Category;
+using EventHorizon.Models.DTOs.Event;
 using EventHorizon.Models.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using System.Security.Claims;
 
 namespace EventHorizon.Controllers
 {
     [ApiController]
-    [Route("api/category")]
-    public class CategoryController : ControllerBase
+    [Route("api/event")]
+    public class EventController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly IEventRepository eventRepository;
         private readonly GeneralResponse _response;
         private readonly IMapper _mapper;
-        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper)
+        public EventController(IEventRepository eventRepository, IMapper mapper)
         {
             _response = new GeneralResponse();
-            this.categoryRepository = categoryRepository;
+            this.eventRepository = eventRepository;
             _mapper = mapper;
         }
 
@@ -32,18 +31,18 @@ namespace EventHorizon.Controllers
         {
             try
             {
-                List<Category>? categories = await categoryRepository.GetAllAsync();
+                List<Event>? events = await eventRepository.GetAllAsync();
 
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
-                if (categories == null || categories.Count == 0)
+                if (events == null || events.Count == 0)
                 {
                     _response.isSuccess = false;
                     _response.statusCode = HttpStatusCode.NotFound;
                     return _response;
                 }
-                
-                _response.Result = _mapper.Map<List<CategoryDTO>>(categories);
+
+                _response.Result = events;
             }
             catch (Exception ex)
             {
@@ -55,23 +54,17 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GeneralResponse>> Get([FromRoute] int id)
+        public async Task<ActionResult<GeneralResponse>> Get([FromRoute] Guid id)
         {
             try
             {
-                if(id <= 0)
-                {
-                    _response.isSuccess = false;
-                    _response.statusCode = HttpStatusCode.BadRequest;
-                    return _response;
-                }
-                Category? category = await categoryRepository.GetAsync(c => c.Id == id);
-                if(category == null)
+                Event? _event = await eventRepository.GetAsync(c => c.Id == id);
+                if (_event == null)
                 {
                     _response.isSuccess = false;
                     _response.statusCode = HttpStatusCode.NotFound;
@@ -79,13 +72,13 @@ namespace EventHorizon.Controllers
                 }
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
-                _response.Result = category;
+                _response.Result =  _mapper.Map<EventDTO>(_event);
             }
             catch
             {
                 _response.isSuccess = false;
                 _response.statusCode = HttpStatusCode.InternalServerError;
-                _response.Errors = new List<string>() { "An error occurred while retrieving the category." };
+                _response.Errors = new List<string>() { "An error occurred while retrieving the event." };
             }
             return _response;
         }
@@ -95,21 +88,26 @@ namespace EventHorizon.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public async Task<ActionResult<GeneralResponse>> Create([FromBody] CategoryCreateDTO categoryCreateDTO)
+        public async Task<ActionResult<GeneralResponse>> Create([FromBody] EventCreateDTO eventCreateDTO)
         {
+            if (eventCreateDTO == null)
+            {
+                _response.isSuccess = false;
+                _response.statusCode = HttpStatusCode.BadRequest;
+                return _response;
+            }
+
             try
             {
-                if (categoryCreateDTO == null)
-                {
-                    _response.isSuccess = false;
-                    _response.statusCode = HttpStatusCode.BadRequest;
-                    return _response;
-                }
-                Category category = new(){  Name = categoryCreateDTO.Name };
-                await categoryRepository.CreateAsync(category);
+                Event _event = _mapper.Map<Event>(eventCreateDTO);
+                _event.CreatedAt = DateTime.Now;
+                _event.UpdatedAt = DateTime.Now;
+                //_event.OwnerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                _event.OwnerId = "8865c445-b137-445b-bacc-87e8f1a5b668"; // just for testing
+                await eventRepository.CreateAsync(_event);
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
-                _response.Result = category;
+                _response.Result = _event;
             }
             catch (Exception ex)
             {
@@ -125,28 +123,28 @@ namespace EventHorizon.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GeneralResponse>> Update([FromBody] CategoryUpdateDTO updateDTO)
+        public async Task<ActionResult<GeneralResponse>> Update([FromBody] EventUpdateDTO updateDTO)
         {
             try
             {
-                if (updateDTO == null || updateDTO.Id <= 0)
+                if (updateDTO == null)
                 {
                     _response.isSuccess = false;
                     _response.statusCode = HttpStatusCode.BadRequest;
                     return _response;
                 }
-                Category? category = await categoryRepository.GetAsync(c => c.Id == updateDTO.Id, tracked:false);
-                if (category == null)
+                Event? _event = await eventRepository.GetAsync(c => c.Id == updateDTO.Id, tracked: false);
+                if (_event == null)
                 {
                     _response.isSuccess = false;
                     _response.statusCode = HttpStatusCode.NotFound;
                     return _response;
                 }
-                category = _mapper.Map(updateDTO, category);
-                await categoryRepository.UpdateAsync(category);
+                _event = _mapper.Map(updateDTO, _event);
+                await eventRepository.UpdateAsync(_event);
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
-                _response.Result = _mapper.Map<CategoryDTO>(category);
+                _response.Result = _mapper.Map<EventDTO>(_event);
             }
             catch (Exception ex)
             {
@@ -157,29 +155,23 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:Guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GeneralResponse>> Delete(int id)
+        public async Task<ActionResult<GeneralResponse>> Delete(Guid id)
         {
-            if(id <= 0)
-            {
-                _response.isSuccess = false;
-                _response.statusCode = HttpStatusCode.BadRequest;
-                return _response;
-            }
             try
             {
-                Category? category = await categoryRepository.GetAsync(c => c.Id == id);
-                if (category == null)
+                Event? _event = await eventRepository.GetAsync(c => c.Id == id);
+                if (_event == null)
                 {
                     _response.isSuccess = false;
                     _response.statusCode = HttpStatusCode.NotFound;
                     return _response;
                 }
-                await categoryRepository.RemoveAsync(category);
+                await eventRepository.RemoveAsync(_event);
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
             }
@@ -191,6 +183,5 @@ namespace EventHorizon.Controllers
             }
             return _response;
         }
-
     }
 }
