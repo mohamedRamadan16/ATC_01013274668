@@ -22,6 +22,8 @@ namespace EventHorizon
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddAutoMapper(typeof(MappingConfig));
+
             builder.Services.AddScoped<ISeeder, Seeder>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
