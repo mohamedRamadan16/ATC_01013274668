@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Azure;
 using EventHorizon.DataAccess.Persistence;
 using EventHorizon.DataAccess.Repository.IRepository;
 using EventHorizon.Models.DTOs.Category;
 using EventHorizon.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System.Net;
 
 namespace EventHorizon.Controllers
@@ -25,9 +24,9 @@ namespace EventHorizon.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(200)]
+        //[ProducesResponseType(404)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<GeneralResponse>> GetAll()
         {
             try
@@ -56,10 +55,10 @@ namespace EventHorizon.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GeneralResponse>> Get([FromRoute] int id)
         {
             try
@@ -90,10 +89,11 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
+        [Authorize(Roles = RolesConstant.Admin)]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<ActionResult<GeneralResponse>> Create([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
@@ -120,11 +120,12 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
+        [Authorize(Roles = RolesConstant.Admin)]
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GeneralResponse>> Update([FromBody] CategoryUpdateDTO updateDTO)
         {
             try
@@ -157,11 +158,12 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
+        [Authorize(Roles = RolesConstant.Admin)]
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GeneralResponse>> Delete(int id)
         {
             if(id <= 0)
