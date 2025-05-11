@@ -3,6 +3,7 @@ using EventHorizon.DataAccess.Persistence;
 using EventHorizon.DataAccess.Repository.IRepository;
 using EventHorizon.Models.DTOs.Event;
 using EventHorizon.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
@@ -24,9 +25,9 @@ namespace EventHorizon.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(200)]
+        //[ProducesResponseType(404)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<GeneralResponse>> GetAll()
         {
             try
@@ -55,10 +56,10 @@ namespace EventHorizon.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GeneralResponse>> Get([FromRoute] Guid id)
         {
             try
@@ -83,10 +84,11 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
+        [Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
 
         public async Task<ActionResult<GeneralResponse>> Create([FromBody] EventCreateDTO eventCreateDTO)
         {
@@ -102,8 +104,8 @@ namespace EventHorizon.Controllers
                 Event _event = _mapper.Map<Event>(eventCreateDTO);
                 _event.CreatedAt = DateTime.Now;
                 _event.UpdatedAt = DateTime.Now;
-                //_event.OwnerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                _event.OwnerId = "8865c445-b137-445b-bacc-87e8f1a5b668"; // just for testing
+                _event.OwnerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //_event.OwnerId = "8865c445-b137-445b-bacc-87e8f1a5b668"; // just for testing
                 await eventRepository.CreateAsync(_event);
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
@@ -118,11 +120,12 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
+        [Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GeneralResponse>> Update([FromBody] EventUpdateDTO updateDTO)
         {
             try
@@ -134,12 +137,23 @@ namespace EventHorizon.Controllers
                     return _response;
                 }
                 Event? _event = await eventRepository.GetAsync(c => c.Id == updateDTO.Id, tracked: false);
+                string currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (_event == null)
                 {
                     _response.isSuccess = false;
                     _response.statusCode = HttpStatusCode.NotFound;
                     return _response;
                 }
+
+                // Authorize the owner of the event
+                if(_event.OwnerId != currentUserId)
+                {
+                    _response.isSuccess = false;
+                    _response.statusCode = HttpStatusCode.Forbidden;
+                    _response.Errors = new List<string>() { "You are not authorized to update this event." };
+                    return _response;
+                }
+
                 _event = _mapper.Map(updateDTO, _event);
                 await eventRepository.UpdateAsync(_event);
                 _response.isSuccess = true;
@@ -155,22 +169,35 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
+        [Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
         [HttpDelete("{id:Guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GeneralResponse>> Delete(Guid id)
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<GeneralResponse>> Delete([FromRoute]Guid id)
         {
             try
             {
                 Event? _event = await eventRepository.GetAsync(c => c.Id == id);
+                string currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
                 if (_event == null)
                 {
                     _response.isSuccess = false;
                     _response.statusCode = HttpStatusCode.NotFound;
                     return _response;
                 }
+
+                // Authorize the owner of the event
+                if (_event.OwnerId != currentUserId)
+                {
+                    _response.isSuccess = false;
+                    _response.statusCode = HttpStatusCode.Forbidden;
+                    _response.Errors = new List<string>() { "You are not authorized to update this event." };
+                    return _response;
+                }
+
                 await eventRepository.RemoveAsync(_event);
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
