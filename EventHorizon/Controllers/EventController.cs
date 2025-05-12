@@ -5,6 +5,7 @@ using EventHorizon.Models.DTOs.Event;
 using EventHorizon.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 using System.Net;
 using System.Security.Claims;
 
@@ -28,14 +29,21 @@ namespace EventHorizon.Controllers
         //[ProducesResponseType(200)]
         //[ProducesResponseType(404)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<GeneralResponse>> GetAll()
+        [HttpGet]
+        public async Task<ActionResult<GeneralResponse>> GetAll(
+                [FromQuery] string? venue = null,
+                [FromQuery] int pageSize = 0,
+                [FromQuery] int pageNumber = 1)
         {
             try
             {
-                List<Event>? events = await eventRepository.GetAllAsync();
+                Expression<Func<Event, bool>>? filter = null;
 
-                _response.isSuccess = true;
-                _response.statusCode = HttpStatusCode.OK;
+                if (!string.IsNullOrEmpty(venue))
+                    filter = e => e.Venue.Contains(venue);
+
+                var events = await eventRepository.GetAllAsync(filter, pageSize: pageSize, pageNumber: pageNumber);
+
                 if (events == null || events.Count == 0)
                 {
                     _response.isSuccess = false;
@@ -43,17 +51,20 @@ namespace EventHorizon.Controllers
                     return _response;
                 }
 
+                _response.isSuccess = true;
+                _response.statusCode = HttpStatusCode.OK;
                 _response.Result = events;
             }
             catch (Exception ex)
             {
                 _response.isSuccess = false;
                 _response.statusCode = HttpStatusCode.InternalServerError;
-                _response.Errors = new List<string>() { ex.ToString() };
+                _response.Errors = new List<string> { ex.Message };
             }
 
             return _response;
         }
+
 
         [HttpGet("{id:guid}")]
         //[ProducesResponseType(StatusCodes.Status200OK)]

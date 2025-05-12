@@ -16,11 +16,11 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
             .IsRequired()
             .HasMaxLength(1000);
 
-        builder.Property(e => e.venue)
+        builder.Property(e => e.Venue)
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(e => e.price)
+        builder.Property(e => e.Price)
             .HasColumnType("decimal(10, 2)");
 
         builder.Property(e => e.ImageUrl)
@@ -45,6 +45,6 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         // indexes for filtering/sorting
         builder.HasIndex(e => e.Name);
         builder.HasIndex(e => e.EventDate);
-        builder.HasIndex(e => e.price);
+        builder.HasIndex(e => e.Price);
     }
 }

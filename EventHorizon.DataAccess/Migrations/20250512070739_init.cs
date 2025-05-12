@@ -176,8 +176,8 @@ namespace EventHorizon.DataAccess.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    venue = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Venue = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -262,9 +262,9 @@ namespace EventHorizon.DataAccess.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Events_price",
+                name: "IX_Events_Price",
                 table: "Events",
-                column: "price");
+                column: "Price");
         }
 
         /// <inheritdoc />

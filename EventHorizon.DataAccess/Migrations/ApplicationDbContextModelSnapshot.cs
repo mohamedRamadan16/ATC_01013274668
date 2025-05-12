@@ -140,15 +140,15 @@ namespace EventHorizon.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10, 2)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<decimal>("price")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<string>("venue")
+                    b.Property<string>("Venue")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -163,7 +163,7 @@ namespace EventHorizon.DataAccess.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("price");
+                    b.HasIndex("Price");
 
                     b.ToTable("Events");
                 });
