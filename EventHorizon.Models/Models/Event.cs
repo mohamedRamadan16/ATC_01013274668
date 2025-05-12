@@ -8,7 +8,7 @@ public class Event
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string venue { get; set; } = null!;
-    public double price { get; set; }
+    public decimal price { get; set; }
     public string? ImageUrl { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

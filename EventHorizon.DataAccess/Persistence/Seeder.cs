@@ -16,9 +16,10 @@ public class Seeder(ApplicationDbContext dbContext,
 
         if (await dbContext.Database.CanConnectAsync())
         {
-            // Seeding the roles
+            // Seeding the roles && users
             if (!dbContext.Roles.Any())
             {
+                // Seeding the roles
                 var roles = GetRoles();
                 await dbContext.Roles.AddRangeAsync(roles);
                 await dbContext.SaveChangesAsync();
@@ -74,9 +75,25 @@ public class Seeder(ApplicationDbContext dbContext,
 
                 }
             }
+
+
+            // Seeding the categories
+            if (!dbContext.Categories.Any())
+            {
+                var categories = GetCategories();
+                await dbContext.Categories.AddRangeAsync(categories);
+                await dbContext.SaveChangesAsync();
+            }
+
+            // Seeding the events
+            if (!dbContext.Events.Any())
+            {
+                var events = GetEvents();
+                await dbContext.Events.AddRangeAsync(events);
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
-
 
     private IEnumerable<IdentityRole> GetRoles()
     {
@@ -93,6 +110,39 @@ public class Seeder(ApplicationDbContext dbContext,
                     }
             ];
         return roles;
+    }
+    private IEnumerable<Category> GetCategories()
+    {
+        List<Category> categories = [
+                new Category { Name = "Tech" },
+                new Category { Name = "Music" },
+                new Category { Name = "Health" }
+            ];
+        return categories;
+    }
+    private IEnumerable<Event> GetEvents()
+    {
+        var techCategoryId = dbContext.Categories.First(c => c.Name == "Tech").Id;
+        var adminUser = dbContext.Users.First(u => u.Email == "admin@eventhorizon.com");
+
+        var events = new List<Event>();
+        for (int i = 1; i <= 50; i++)
+        {
+            events.Add(new Event
+            {
+                Name = $"Tech Summit {2025 + (i % 3)} - Edition {i}",
+                Description = $"Annual tech event number {i}.",
+                venue = $"Conference Hall {i % 10 + 1}, Cairo",
+                price = 100 + i,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                EventDate = DateTime.Now.AddDays(i * 2),
+                CategoryId = techCategoryId,
+                OwnerId = adminUser.Id
+            });
+        }
+
+        return events;
     }
 
 }
