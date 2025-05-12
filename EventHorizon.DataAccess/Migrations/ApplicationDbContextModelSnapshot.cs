@@ -97,7 +97,8 @@ namespace EventHorizon.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -116,23 +117,24 @@ namespace EventHorizon.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("EventDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("OwnerId")
                         .IsRequired()
@@ -141,20 +143,27 @@ namespace EventHorizon.DataAccess.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
+                        .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<double>("price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("price")
+                        .HasColumnType("decimal(10, 2)");
 
                     b.Property<string>("venue")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("EventDate");
+
+                    b.HasIndex("Name");
+
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("price");
 
                     b.ToTable("Events");
                 });
@@ -296,12 +305,13 @@ namespace EventHorizon.DataAccess.Migrations
                 {
                     b.HasOne("EventHorizon.Models.Models.Category", "Category")
                         .WithMany("Events")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("EventHorizon.Models.Models.ApplicationUser", "Owner")
-                        .WithMany("Events")
+                        .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -358,11 +368,6 @@ namespace EventHorizon.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("EventHorizon.Models.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("EventHorizon.Models.Models.Category", b =>
