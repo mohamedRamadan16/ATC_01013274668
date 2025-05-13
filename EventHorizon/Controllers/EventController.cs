@@ -31,7 +31,7 @@ namespace EventHorizon.Controllers
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
         public async Task<ActionResult<GeneralResponse>> GetAll(
-                [FromQuery] string? venue = null,
+                [FromQuery] string? searchQuery = null,
                 [FromQuery] int pageSize = 0,
                 [FromQuery] int pageNumber = 1)
         {
@@ -39,8 +39,9 @@ namespace EventHorizon.Controllers
             {
                 Expression<Func<Event, bool>>? filter = null;
 
-                if (!string.IsNullOrEmpty(venue))
-                    filter = e => e.Venue.Contains(venue);
+                // search by name, venue and description
+                if (!string.IsNullOrEmpty(searchQuery))
+                    filter = e => e.Venue.ToLower().Contains(searchQuery.ToLower()) || e.Name.ToLower().Contains(searchQuery.ToLower()) || e.Description.ToLower().Contains(searchQuery.ToLower());
 
                 var events = await eventRepository.GetAllAsync(filter, pageSize: pageSize, pageNumber: pageNumber);
 
@@ -101,7 +102,7 @@ namespace EventHorizon.Controllers
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public async Task<ActionResult<GeneralResponse>> Create([FromBody] EventCreateDTO eventCreateDTO)
+        public async Task<ActionResult<GeneralResponse>> Create([FromForm] EventCreateDTO eventCreateDTO)
         {
             if (eventCreateDTO == null)
             {
@@ -112,10 +113,26 @@ namespace EventHorizon.Controllers
 
             try
             {
+                // Upload logic
+                string imageUrl = null!;
+                if (eventCreateDTO.Image != null)
+                {
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                    Directory.CreateDirectory(uploadsFolder); // Ensure directory exists
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(eventCreateDTO.Image.FileName);
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await eventCreateDTO.Image.CopyToAsync(stream);
+                    }
+                    imageUrl = "/images/" + fileName;
+                }
+
                 Event _event = _mapper.Map<Event>(eventCreateDTO);
                 _event.CreatedAt = DateTime.Now;
                 _event.UpdatedAt = DateTime.Now;
                 _event.OwnerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                _event.ImageUrl = imageUrl;
                 //_event.OwnerId = "8865c445-b137-445b-bacc-87e8f1a5b668"; // just for testing
                 await eventRepository.CreateAsync(_event);
                 _response.isSuccess = true;

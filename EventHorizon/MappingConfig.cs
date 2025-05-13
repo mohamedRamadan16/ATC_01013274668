@@ -16,7 +16,12 @@ namespace EventHorizon
 
             // Event
             CreateMap<Event, EventDTO>().ReverseMap();
-            CreateMap<Event, EventCreateDTO>().ReverseMap();
+            CreateMap<EventCreateDTO, Event>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()) // We set it manually
+                .ForMember(dest => dest.OwnerId, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ReverseMap();
             CreateMap<Event, EventUpdateDTO>().ReverseMap();
         }
     }
