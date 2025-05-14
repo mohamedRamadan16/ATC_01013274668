@@ -1,6 +1,7 @@
 ﻿using EventHorizon.DataAccess.Persistence;
 using EventHorizon.Models.DTOs.Account;
 using EventHorizon.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -152,6 +153,25 @@ namespace EventHorizon.Controllers
                 }
             }
             catch(Exception ex)
+            {
+                _response.isSuccess = false;
+                _response.statusCode = HttpStatusCode.InternalServerError;
+                _response.Errors = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public ActionResult<GeneralResponse> Logout()
+        {
+            try
+            {
+                _response.isSuccess = true;
+                _response.statusCode = HttpStatusCode.OK;
+                _response.Result = new { message = "Logged out successfully" };
+            }
+            catch (Exception ex)
             {
                 _response.isSuccess = false;
                 _response.statusCode = HttpStatusCode.InternalServerError;

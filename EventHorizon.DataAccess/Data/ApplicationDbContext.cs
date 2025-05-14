@@ -12,6 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Event> Events { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<UserEvent> UserEvents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,6 +21,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         // Register configurations
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         modelBuilder.ApplyConfiguration(new EventConfiguration());
+
+        // Composite primary key for UserEvent
+        modelBuilder.Entity<UserEvent>()
+            .HasKey(ue => new { ue.UserId, ue.EventId });
     }
 
 }
