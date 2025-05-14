@@ -1,4 +1,3 @@
-
 using EventHorizon.DataAccess.Data;
 using EventHorizon.DataAccess.Persistence;
 using EventHorizon.DataAccess.Repository;
@@ -20,8 +19,8 @@ namespace EventHorizon
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -31,6 +30,8 @@ namespace EventHorizon
             builder.Services.AddScoped<ISeeder, Seeder>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<IUserEventRepository, UserEventRepository>();
+
 
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -91,7 +92,7 @@ namespace EventHorizon
                         },
 
                         []
-                    }
+                    }       
 
                 });
             });
@@ -113,7 +114,7 @@ namespace EventHorizon
 
             app.UseStaticFiles();
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection();  
 
             app.UseAuthentication();
 

@@ -11,11 +11,12 @@ namespace EventHorizon
         {
             // Category
             CreateMap<Category, CategoryCreateDTO>();
-            CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Category, Models.DTOs.Category.CategoryDTO>().ReverseMap();
             CreateMap<Category, CategoryUpdateDTO>().ReverseMap();
 
             // Event
-            CreateMap<Event, EventDTO>().ReverseMap();
+            CreateMap<Event, EventDTO>()      
+                .ReverseMap();
             CreateMap<EventCreateDTO, Event>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()) // We set it manually
                 .ForMember(dest => dest.OwnerId, opt => opt.Ignore())
@@ -23,6 +24,7 @@ namespace EventHorizon
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
                 .ReverseMap();
             CreateMap<Event, EventUpdateDTO>().ReverseMap();
+                
         }
     }
 }

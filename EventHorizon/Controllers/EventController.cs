@@ -29,7 +29,6 @@ namespace EventHorizon.Controllers
         //[ProducesResponseType(200)]
         //[ProducesResponseType(404)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet]
         public async Task<ActionResult<GeneralResponse>> GetAll(
                 [FromQuery] string? searchQuery = null,
                 [FromQuery] int pageSize = 0,
@@ -65,7 +64,6 @@ namespace EventHorizon.Controllers
 
             return _response;
         }
-
 
         [HttpGet("{id:guid}")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
