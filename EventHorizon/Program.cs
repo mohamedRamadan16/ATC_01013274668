@@ -114,13 +114,14 @@ namespace EventHorizon
 
             app.UseStaticFiles();
 
-            app.UseHttpsRedirection();  
+            app.UseHttpsRedirection();
+
+            app.UseCors("EventHorizonPolicy");
 
             app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseCors("EventHorizonPolicy");
 
             app.MapControllers();
 

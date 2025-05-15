@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events - EventHorizon</title>
+    <link rel="stylesheet" href="styles/main.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <header class="main-header">
+      <nav class="nav-container">
+        <div class="logo">
+          <h1>EventHorizon</h1>
+        </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="events.html">Events</a>
+          <a href="my-bookings.html">My Bookings</a>
+          <span id="userInfo" style="display: none"></span>
+          <button class="login-btn main-btn">Login</button>
+          <button class="register-btn main-btn">Register</button>
+          <button id="logoutBtn" class="main-btn" style="display: none">
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="events-section">
+        <div class="section-header">
+          <h1>Discover Events</h1>
+          <div class="search-container">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search events..."
+                class="search-input"
+              />
+            </div>
+            <button id="searchBtn" class="main-btn">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
+        </div>
+
+        <div id="eventsContainer" class="events-grid"></div>
+
+        <div class="pagination">
+          <button id="prevPage" class="main-btn">
+            <i class="fas fa-chevron-left"></i> Previous
+          </button>
+          <span id="pageInfo">Page 1</span>
+          <button id="nextPage" class="main-btn">
+            Next <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <input type="text" id="username" placeholder="Username" required />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+          />
+          <button type="submit" class="main-btn">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Register</h2>
+        <form id="registerForm">
+          <input type="text" id="regUsername" placeholder="Username" required />
+          <input type="email" id="regEmail" placeholder="Email" required />
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Password"
+            required
+          />
+          <button type="submit" class="main-btn">Register</button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2024 EventHorizon. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/eventCard.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>
