@@ -94,7 +94,8 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
-        [Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
+        //[Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
+        [Authorize(Roles = $"{RolesConstant.Admin}")]
         [HttpPost]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -146,7 +147,8 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
-        [Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
+        //[Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
+        [Authorize(Roles = $"{RolesConstant.Admin}")]
         [HttpPut]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -163,7 +165,7 @@ namespace EventHorizon.Controllers
                     return _response;
                 }
                 Event? _event = await eventRepository.GetAsync(c => c.Id == updateDTO.Id, tracked: false);
-                string currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //string currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (_event == null)
                 {
                     _response.isSuccess = false;
@@ -172,13 +174,13 @@ namespace EventHorizon.Controllers
                 }
 
                 // Authorize the owner of the event
-                if(_event.OwnerId != currentUserId)
-                {
-                    _response.isSuccess = false;
-                    _response.statusCode = HttpStatusCode.Forbidden;
-                    _response.Errors = new List<string>() { "You are not authorized to update this event." };
-                    return _response;
-                }
+                //if(_event.OwnerId != currentUserId)
+                //{
+                //    _response.isSuccess = false;
+                //    _response.statusCode = HttpStatusCode.Forbidden;
+                //    _response.Errors = new List<string>() { "You are not authorized to update this event." };
+                //    return _response;
+                //}
 
                 _event = _mapper.Map(updateDTO, _event);
                 await eventRepository.UpdateAsync(_event);
@@ -195,7 +197,8 @@ namespace EventHorizon.Controllers
             return _response;
         }
 
-        [Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
+        //[Authorize(Roles = $"{RolesConstant.Admin},{RolesConstant.Owner}")]
+        [Authorize(Roles = $"{RolesConstant.Admin}")]
         [HttpDelete("{id:Guid}")]
         //[ProducesResponseType(StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -206,7 +209,7 @@ namespace EventHorizon.Controllers
             try
             {
                 Event? _event = await eventRepository.GetAsync(c => c.Id == id);
-                string currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //string currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 if (_event == null)
                 {
@@ -215,14 +218,14 @@ namespace EventHorizon.Controllers
                     return _response;
                 }
 
-                // Authorize the owner of the event
-                if (_event.OwnerId != currentUserId)
-                {
-                    _response.isSuccess = false;
-                    _response.statusCode = HttpStatusCode.Forbidden;
-                    _response.Errors = new List<string>() { "You are not authorized to update this event." };
-                    return _response;
-                }
+                //// Authorize the owner of the event
+                //if (_event.OwnerId != currentUserId)
+                //{
+                //    _response.isSuccess = false;
+                //    _response.statusCode = HttpStatusCode.Forbidden;
+                //    _response.Errors = new List<string>() { "You are not authorized to update this event." };
+                //    return _response;
+                //}
 
                 await eventRepository.RemoveAsync(_event);
                 _response.isSuccess = true;
