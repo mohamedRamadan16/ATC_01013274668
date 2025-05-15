@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventHorizon - My Bookings</title>
+    <link rel="stylesheet" href="styles/main.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      main {
+        margin-top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    <header class="main-header">
+      <nav class="nav-container">
+        <div class="logo">
+          <h1>EventHorizon</h1>
+        </div>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="events.html">Events</a>
+          <a href="my-bookings.html">My Bookings</a>
+          <span id="userInfo" style="display: none"></span>
+          <button class="login-btn main-btn">Login</button>
+          <button class="register-btn main-btn">Register</button>
+          <button id="logoutBtn" class="main-btn" style="display: none">
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="events-section">
+        <h2>My Bookings</h2>
+        <div class="events-grid" id="bookingsGrid">
+          <!-- User bookings will be dynamically added here -->
+        </div>
+      </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+      <div
+        class="modal-content"
+        style="border-radius: 12px; padding: 30px 30px 20px 30px"
+      >
+        <span class="close">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+          <input
+            type="text"
+            id="username"
+            placeholder="Username"
+            required
+            style="
+              width: 100%;
+              margin-bottom: 15px;
+              padding: 10px;
+              border-radius: 6px;
+              border: 1px solid #ccc;
+              font-size: 1rem;
+            "
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+            style="
+              width: 100%;
+              margin-bottom: 15px;
+              padding: 10px;
+              border-radius: 6px;
+              border: 1px solid #ccc;
+              font-size: 1rem;
+            "
+          />
+          <button type="submit" class="main-btn" style="width: 100%">
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+      <div
+        class="modal-content"
+        style="border-radius: 12px; padding: 30px 30px 20px 30px"
+      >
+        <span class="close">&times;</span>
+        <h2>Register</h2>
+        <form id="registerForm">
+          <input
+            type="text"
+            id="regUsername"
+            placeholder="Username"
+            required
+            style="
+              width: 100%;
+              margin-bottom: 15px;
+              padding: 10px;
+              border-radius: 6px;
+              border: 1px solid #ccc;
+              font-size: 1rem;
+            "
+          />
+          <input
+            type="email"
+            id="regEmail"
+            placeholder="Email"
+            required
+            style="
+              width: 100%;
+              margin-bottom: 15px;
+              padding: 10px;
+              border-radius: 6px;
+              border: 1px solid #ccc;
+              font-size: 1rem;
+            "
+          />
+          <input
+            type="password"
+            id="regPassword"
+            placeholder="Password"
+            required
+            style="
+              width: 100%;
+              margin-bottom: 15px;
+              padding: 10px;
+              border-radius: 6px;
+              border: 1px solid #ccc;
+              font-size: 1rem;
+            "
+          />
+          <button type="submit" class="main-btn" style="width: 100%">
+            Register
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2024 EventHorizon. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="js/my-bookings.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>
