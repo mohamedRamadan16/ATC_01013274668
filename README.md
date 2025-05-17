@@ -16,6 +16,45 @@ To enhance productivity and code quality, the following AI tools were used throu
 
 ---
 
+### Setup Instructions
+
+#### Prerequisites
+- [.NET SDK 6.0 or later](https://dotnet.microsoft.com/en-us/download)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- IDE (e.g., Visual Studio 2022 or Visual Studio Code with C# extension)
+
+#### Steps
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/your-username/eventhorizon.git
+   cd eventhorizon/backend
+   ```
+
+2. **Configure the Connection String**
+   - Navigate to `appsettings.json`
+   - Replace the `DefaultConnection` value with your SQL Server connection string:
+     ```json
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=.;Database=EventHorizonDb;Trusted_Connection=True;"
+     }
+     ```
+
+3. **Apply Migrations**
+   ```bash
+   dotnet ef database update
+   ```
+
+4. **Run the Project**
+   ```bash
+   dotnet run
+   ```
+
+5. **Test the API**
+   - Use Swagger at `https://localhost:7193/swagger`
+   - Or test endpoints using Postman or any API client
+   - Or just run the project from your code editor and test them with swagger docs.
+
+
 ## Backend
 
 ### Technology Stack
@@ -89,21 +128,6 @@ The application follows an **N-Tier Architecture** to ensure a clean separation 
 #### Admin Panel
 - Accessible to authenticated admin users  
 - Create, update, and delete events through a dedicated interface
-
-### File Structure
-root/
-├── index.html → Main landing page
-├── events.html → Event listings
-├── my-bookings.html → User booking history
-├── admin.html → Admin dashboard
-├── css/
-│ └── style.css → Stylesheets
-├── js/
-│ ├── auth.js → Authentication logic
-│ ├── main.js → Homepage interactions
-│ ├── events.js → Event page functionality
-│ └── my-bookings.js → Booking page logic
-└── resources/ → Static assets (images, etc.)
 
 
 ---
