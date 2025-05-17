@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Http;
+
 namespace EventHorizon.Models.DTOs.Event;
 
 public class EventUpdateDTO
@@ -8,7 +10,7 @@ public class EventUpdateDTO
     public string Description { get; set; } = null!;
     public string venue { get; set; } = null!;
     public decimal price { get; set; }
-    public string? ImageUrl { get; set; }
+    public IFormFile? Image { get; set; }
     public DateTime EventDate { get; set; }
     public int? CategoryId { get; set; }
 }

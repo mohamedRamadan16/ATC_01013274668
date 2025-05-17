@@ -138,8 +138,12 @@ async function fetchEvents(pageSize, pageNumber, searchQuery = "") {
       return data.result;
     }
     return [];
-  } catch (err) {
-    alert("Failed to fetch events: " + err.message);
+  } catch (error) {
+    if (error.message !== "Failed to fetch") {
+      alert("Failed to fetch events: " + error.message);
+    } else {
+      console.warn("Fetch aborted due to navigation.");
+    }
     return [];
   }
 }
@@ -190,6 +194,16 @@ async function bookEvent(eventId) {
   }
 }
 
+function getEventImageUrl(event) {
+  if (event.imageUrl && event.imageUrl.startsWith("http")) {
+    return event.imageUrl;
+  }
+  if (event.imageUrl) {
+    return `https://localhost:7193/${event.imageUrl.replace(/^\//, "")}`;
+  }
+  return "resources/images/placeholder.png";
+}
+
 // Create Event Card
 function createEventCard(event, booked) {
   let formattedDate = "Date TBA";
@@ -221,7 +235,9 @@ function createEventCard(event, booked) {
   return `
         <div class="event-card" data-event-id="${event.id}">
             <div class="event-image">
-                <img src="${event.imageUrl || event.image}" alt="${event.name}">
+                <img src="${getEventImageUrl(event)}" alt="${
+    event.name
+  }" onerror="this.onerror=null;this.src='resources/images/placeholder.png';">
                 <span class="event-category">${
                   event.category?.name || event.category || ""
                 }</span>

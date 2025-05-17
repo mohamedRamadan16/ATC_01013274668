@@ -164,8 +164,12 @@ async function fetchUserBookings() {
       return data.result;
     }
     return [];
-  } catch (err) {
-    alert("Failed to fetch bookings: " + err.message);
+  } catch (error) {
+    if (error.message !== "Failed to fetch") {
+      alert("Failed to fetch bookings: " + error.message);
+    } else {
+      console.warn("Fetch aborted due to navigation.");
+    }
     return [];
   }
 }
@@ -192,6 +196,16 @@ async function cancelBooking(eventId) {
   } catch (err) {
     alert("Cancel error: " + err.message);
   }
+}
+
+function getEventImageUrl(event) {
+  if (event.imageUrl && event.imageUrl.startsWith("http")) {
+    return event.imageUrl;
+  }
+  if (event.imageUrl) {
+    return `https://localhost:7193/${event.imageUrl.replace(/^\//, "")}`;
+  }
+  return "resources/images/placeholder.png";
 }
 
 function createBookingCard(booking) {
@@ -225,7 +239,9 @@ function createBookingCard(booking) {
   return `
     <div class="event-card" data-event-id="${event.id}">
       <div class="event-image">
-        <img src="${event.imageUrl || event.image}" alt="${event.name}">
+        <img src="${getEventImageUrl(event)}" alt="${
+    event.name
+  }" onerror="this.onerror=null;this.src='resources/images/placeholder.png';">
         <span class="event-category">${
           event.category?.name || event.category || ""
         }</span>

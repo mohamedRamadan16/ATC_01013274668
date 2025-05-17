@@ -18,28 +18,55 @@ function getUsernameFromToken(token) {
   }
 }
 
+function isAdmin(token) {
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return (
+      payload[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] === "Admin"
+    );
+  } catch {
+    return false;
+  }
+}
+
 function updateAuthUI() {
   const token = getToken();
   const userInfo = document.getElementById("userInfo");
   const loginBtn = document.querySelector(".login-btn");
   const registerBtn = document.querySelector(".register-btn");
   const logoutBtn = document.getElementById("logoutBtn");
+  const adminPanelLink = document.getElementById("adminPanelLink");
 
   if (!userInfo || !loginBtn || !registerBtn || !logoutBtn) return;
 
   if (token) {
     const username = getUsernameFromToken(token);
+    const isUserAdmin = isAdmin(token);
+
     userInfo.style.display = "inline";
     userInfo.textContent = username ? `👤 ${username}` : "";
     loginBtn.style.display = "none";
     registerBtn.style.display = "none";
     logoutBtn.style.display = "inline-block";
+
+    // Show/hide admin panel link based on role
+    if (adminPanelLink) {
+      adminPanelLink.style.display = isUserAdmin ? "inline-block" : "none";
+    }
   } else {
     userInfo.style.display = "none";
     userInfo.textContent = "";
     loginBtn.style.display = "inline-block";
     registerBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
+
+    // Hide admin panel link
+    if (adminPanelLink) {
+      adminPanelLink.style.display = "none";
+    }
   }
 }
 
@@ -49,7 +76,7 @@ document.addEventListener("click", function (e) {
   if (e.target && e.target.id === "logoutBtn") {
     localStorage.removeItem("token");
     updateAuthUI();
-    window.location.reload();
+    window.location.href = "index.html";
   }
 });
 
