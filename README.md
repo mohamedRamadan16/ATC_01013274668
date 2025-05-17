@@ -3,12 +3,27 @@
 ## Overview
 **EventHorizon** is a full-stack web application built for seamless event management. It enables users to browse, book, and manage events, while providing administrators with tools to oversee and control event listings.
 
+## **Live Overview**
+
+I used MonsterASP to host my backend, and Netlify to host the front-end
+you can see a live overview : **https://romioeventhorizon.netlify.app/**
+
+Admin Credentials
+- username : admin123
+- password : Admin123*
+
 **Swagger Documentation**
-you can check the swagger documentation for the API here : http://eventhorizon.runasp.net/swagger/index.html
+you can check the swagger documentation for the API here : **https://eventhorizon.runasp.net/swagger/index.html**
+
+or you can download the EventHorizon-FrontEnd Folder
+open the index.html then start a liveserver.
+
+
 
 
 ## Considerations
-As my expertise lies primarily in backend development, the frontend was implemented using simple technologies to focus on core functionality and maintainability.
+As my expertise lies primarily in backend development, the frontend was implemented using simple technologies and using AI tools (vibe coding).
+
 
 ## AI Tools Utilized
 To enhance productivity and code quality, the following AI tools were used throughout development:
@@ -20,10 +35,12 @@ To enhance productivity and code quality, the following AI tools were used throu
 
 ---
 
-### Setup Instructions
+
+
+### Local Setup Instructions
 
 #### Prerequisites
-- [.NET SDK 6.0 or later](https://dotnet.microsoft.com/en-us/download)
+- [.NET SDK 8.0 or later](https://dotnet.microsoft.com/en-us/download)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 - IDE (e.g., Visual Studio 2022 or Visual Studio Code with C# extension)
 
@@ -31,24 +48,19 @@ To enhance productivity and code quality, the following AI tools were used throu
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/your-username/eventhorizon.git
-   cd eventhorizon/backend
+   cd EventHorizon
    ```
 
 2. **Configure the Connection String**
    - Navigate to `appsettings.json`
-   - Replace the `DefaultConnection` value with your SQL Server connection string:
+   - Replace the `Default` value with your SQL Server connection string:
      ```json
      "ConnectionStrings": {
-       "DefaultConnection": "Server=.;Database=EventHorizonDb;Trusted_Connection=True;"
+       "Default": "Server=.;Database=EventHorizonDb;Trusted_Connection=True;"
      }
      ```
 
-3. **Apply Migrations**
-   ```bash
-   dotnet ef database update
-   ```
-
-4. **Run the Project**
+3. **Run the Project** (you don't need to apply the migrations as i'm applying it when you start the app)
    ```bash
    dotnet run
    ```
@@ -57,6 +69,11 @@ To enhance productivity and code quality, the following AI tools were used throu
    - Use Swagger at `https://localhost:7193/swagger`
    - Or test endpoints using Postman or any API client
    - Or just run the project from your code editor and test them with swagger docs.
+
+
+
+
+---
 
 
 ## Backend
@@ -105,15 +122,14 @@ The application follows an **N-Tier Architecture** to ensure a clean separation 
 
 ---
 
+
+---
+
 ## Frontend
 
 ### Technology Stack
 - **HTML / CSS / JavaScript (Vanilla JS)**  
-  The frontend is built without external frameworks for simplicity and full control over the user interface.
-
-### Setup Instructions
-**Prerequisites:**
-- Modern web browser (e.g., Chrome, Firefox, Edge)
+  The frontend is built without external frameworks for simplicity.
 
 ### Features
 
