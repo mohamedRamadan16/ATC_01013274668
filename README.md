@@ -3,6 +3,10 @@
 ## Overview
 **EventHorizon** is a full-stack web application built for seamless event management. It enables users to browse, book, and manage events, while providing administrators with tools to oversee and control event listings.
 
+**Swagger Documentation**
+you can check the swagger documentation for the API here : http://eventhorizon.runasp.net/swagger/index.html
+
+
 ## Considerations
 As my expertise lies primarily in backend development, the frontend was implemented using simple technologies to focus on core functionality and maintainability.
 
