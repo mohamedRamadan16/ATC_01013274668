@@ -154,7 +154,7 @@ namespace EventHorizon.Controllers
         //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[ProducesResponseType(StatusCodes.Status400BadRequest)]
         //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GeneralResponse>> Update([FromBody] EventUpdateDTO updateDTO)
+        public async Task<ActionResult<GeneralResponse>> Update([FromForm] EventUpdateDTO updateDTO)
         {
             try
             {
@@ -173,6 +173,21 @@ namespace EventHorizon.Controllers
                     return _response;
                 }
 
+                // Upload logic
+                string imageUrl = null!;
+                if (updateDTO.Image != null)
+                {
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                    Directory.CreateDirectory(uploadsFolder); // Ensure directory exists
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(updateDTO.Image.FileName);
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await updateDTO.Image.CopyToAsync(stream);
+                    }
+                    imageUrl = "/images/" + fileName;
+                }
+
                 // Authorize the owner of the event
                 //if(_event.OwnerId != currentUserId)
                 //{
@@ -183,6 +198,11 @@ namespace EventHorizon.Controllers
                 //}
 
                 _event = _mapper.Map(updateDTO, _event);
+
+                _event.UpdatedAt = DateTime.Now;
+                _event.OwnerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                _event.ImageUrl = imageUrl;
+
                 await eventRepository.UpdateAsync(_event);
                 _response.isSuccess = true;
                 _response.statusCode = HttpStatusCode.OK;
