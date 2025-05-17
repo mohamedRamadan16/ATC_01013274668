@@ -89,12 +89,8 @@ The application follows an **N-Tier Architecture** to ensure a clean separation 
 ### Design Patterns and Principles
 - **Repository Pattern** – Encapsulates data access logic  
 - **Dependency Injection** – Promotes modularity and testability  
-- **SOLID Principles** – Ensures maintainable and extensible code  
+- **SOLID Principles** – Ensures maintainable and extensible code
 
-### Setup Instructions
-**Prerequisites:**
-- .NET SDK 6.0 or later  
-- SQL Server instance  
 
 ### API Endpoints
 
